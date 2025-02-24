@@ -5,8 +5,6 @@
         "laravel",
         "laravel-safe-migrations"
     ],
-    "homepage": "https://github.com/aramayismirzoyan/laravel-safe-migrations",
-    "license": "MIT",
     "type": "library",
     "autoload": {
         "psr-4": {
