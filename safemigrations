@@ -5,17 +5,21 @@ if (php_sapi_name() !== 'cli') {
     exit;
 }
 
-$root_app = __DIR__;
+$rootApp = __DIR__;
 
-if (!is_file($root_app . '/vendor/autoload.php')) {
-    $root_app = dirname(__DIR__, 3);
+if (!is_file($rootApp . '/vendor/autoload.php')) {
+    $rootApp = dirname(__DIR__, 3);
 }
 
-require $root_app . '/vendor/autoload.php';
+require $rootApp . '/vendor/autoload.php';
 
 use Aramayismirzoyan\SafeMigrations\Console\Bin\ConsoleCommand;
+use Illuminate\Contracts\Console\Kernel;
 use Minicli\App;
 use Minicli\Command\CommandCall;
+
+$app = require $rootApp . '/bootstrap/app.php';
+$app->make(Kernel::class)->bootstrap();
 
 $app = new App();
 $input = new CommandCall($argv);
