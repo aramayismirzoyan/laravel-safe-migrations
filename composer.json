@@ -1,0 +1,67 @@
+{
+    "name": "aramayismirzoyan/laravel-safe-migrations",
+    "description": "Tool for tracking uncontrolled migrations",
+    "keywords": [
+        "laravel",
+        "laravel-safe-migrations"
+    ],
+    "type": "library",
+    "autoload": {
+        "psr-4": {
+            "Aramayismirzoyan\\SafeMigrations\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Test\\": "tests/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Aramayis",
+            "email": "aramayismirzoyan@yahoo.com",
+            "role": "developer"
+        }
+    ],
+    "minimum-stability": "beta",
+    "require-dev": {
+        "phpunit/phpunit": "^11.5",
+        "orchestra/testbench": "^9.10",
+        "phpstan/phpstan": "^2.1",
+        "laravel/pint": "^1.21"
+    },
+    "require": {
+        "php": "^8.2",
+        "symfony/process": "^7.2",
+        "illuminate/support": "^11.41",
+        "minicli/minicli": "^4.2"
+    },
+    "scripts": {
+        "post-autoload-dump": [
+            "@clear",
+            "@prepare"
+        ],
+        "clear": "@php vendor/bin/testbench package:purge-skeleton --ansi",
+        "prepare": "@php vendor/bin/testbench package:discover --ansi",
+        "build": "@php vendor/bin/testbench workbench:build --ansi",
+        "serve": [
+            "Composer\\Config::disableProcessTimeout",
+            "@build",
+            "@php vendor/bin/testbench serve --ansi"
+        ],
+        "test": [
+            "@clear",
+            "@php vendor/bin/phpunit"
+        ]
+    },
+    "bin": [
+        "safemigrations"
+    ],
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Aramayismirzoyan\\SafeMigrations\\Providers\\SafeMigrationProvider"
+            ]
+        }
+    }
+}

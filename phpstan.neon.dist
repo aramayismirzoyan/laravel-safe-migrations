@@ -1,0 +1,9 @@
+parameters:
+    level: 6
+    paths:
+        - src
+        - tests
+    ignoreErrors:
+        -
+            message: '#^Parameter \#1 \$files of method Aramayismirzoyan\\SafeMigrations\\SafeMigration\:\:getSensitiveMigrations\(\) expects array\<int, string\>\|null, string given\.$#'
+            path: src/Console/Commands/CheckPushedMigrationsCommand.php

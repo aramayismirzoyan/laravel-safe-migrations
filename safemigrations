@@ -1,0 +1,25 @@
+#!/usr/bin/env php
+<?php
+
+if (php_sapi_name() !== 'cli') {
+    exit;
+}
+
+$root_app = __DIR__;
+
+if (!is_file($root_app . '/vendor/autoload.php')) {
+    $root_app = dirname(__DIR__, 3);
+}
+
+require $root_app . '/vendor/autoload.php';
+
+use Aramayismirzoyan\SafeMigrations\Console\Bin\ConsoleCommand;
+use Minicli\App;
+use Minicli\Command\CommandCall;
+
+$app = new App();
+$input = new CommandCall($argv);
+
+$command = new ConsoleCommand($app, $input);
+$command->run();
+exit();
