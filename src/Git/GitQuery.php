@@ -3,14 +3,15 @@
 namespace Aramayismirzoyan\SafeMigrations\Git;
 
 use Aramayismirzoyan\SafeMigrations\Expressions\GitException;
+use Aramayismirzoyan\SafeMigrations\Expressions\InvalidMethodArgumentException;
 use Aramayismirzoyan\SafeMigrations\Expressions\NotFoundRemoteException;
 use Aramayismirzoyan\SafeMigrations\Expressions\NotValidCommitHashException;
-use Aramayismirzoyan\SafeMigrations\Git\Parsers\ListParser;
 use Aramayismirzoyan\SafeMigrations\Git\Parsers\GitBranchParser;
 use Aramayismirzoyan\SafeMigrations\Git\Parsers\GitDiffParser;
 use Aramayismirzoyan\SafeMigrations\Git\Parsers\GitLsRemoteParser;
 use Aramayismirzoyan\SafeMigrations\Git\Parsers\GitRemoteParser;
 use Aramayismirzoyan\SafeMigrations\Git\Parsers\GitStatusParser;
+use Aramayismirzoyan\SafeMigrations\Git\Parsers\ListParser;
 use Aramayismirzoyan\SafeMigrations\SafeMigration;
 use Symfony\Component\Process\Process;
 
@@ -151,14 +152,14 @@ class GitQuery
 
         $remoteBranch = $remote . '/' . $currentBranch;
 
-        $command = "cd " . $this->repository . " && ";
+        $command = 'cd ' . $this->repository . ' && ';
         $command .= "git diff --stat {$remoteBranch}";
 
         if (!defined('PHPUNIT_TESTSUITE')) {
             $command .= ' ' . SafeMigration::MIGRATIONS_PATH;
         }
 
-        $command .= " 2>&1";
+        $command .= ' 2>&1';
 
         exec($command, $output, $exitCode);
 
@@ -306,5 +307,40 @@ class GitQuery
         $output = $process->getOutput();
 
         return new ListParser($output);
+    }
+
+    /**
+     * Get edited files in GitHub Actions during push or pull request
+     *
+     * @param string $event
+     * @param string|null $before
+     * @param string|null $after
+     * @return GitDiffParser
+     * @throws InvalidMethodArgumentException
+     */
+    public function getEditedFilesInActions(string $event, ?string $before = null, ?string $after = null): GitDiffParser
+    {
+        $command = 'cd '.$this->repository.' && ';
+        $command .= 'git diff --name-only ';
+
+        if ($event == 'pull_request') {
+            $command .= '-r HEAD^1 HEAD';
+        } else {
+            if (is_null($after) || is_null($before)) {
+                throw new InvalidMethodArgumentException('You need to pass $after and $before for the push event');
+            }
+
+            $command .= $before.' '.$after;
+        }
+
+        if (! defined('PHPUNIT_TESTSUITE')) {
+            $command .= ' '.SafeMigration::MIGRATIONS_PATH;
+        }
+
+        $command .= ' 2>&1';
+
+        exec($command, $output, $exitCode);
+
+        return new GitDiffParser($output);
     }
 }
