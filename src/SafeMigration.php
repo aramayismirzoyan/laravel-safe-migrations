@@ -17,7 +17,7 @@ final class SafeMigration
      * @param GitCommand $gitCommand
      */
     public function __construct(
-        private readonly GitQuery   $gitQuery,
+        private readonly GitQuery $gitQuery,
         private readonly GitCommand $gitCommand
     ) {
     }
@@ -121,5 +121,33 @@ final class SafeMigration
             ->pluck('migration');
 
         return $migrations->toArray();
+    }
+
+    /**
+     * @param string $event
+     * @param string $before
+     * @param string $after
+     * @param string $branch
+     * @return bool
+     * @throws Expressions\GitException
+     * @throws Expressions\InvalidMethodArgumentException
+     * @throws Expressions\NotFoundRemoteException
+     */
+    public function hasSensitiveMigrationsInActions(string $event, string $before, string $after, string $branch): bool
+    {
+        $params['event'] = $event;
+
+        if ($before !== '') {
+            $params['before'] = $before;
+        }
+
+        if ($after !== '') {
+            $params['after'] = $after;
+        }
+
+        $files = $this->gitQuery->getEditedFilesInActions(...$params)->parse();
+        $migrations = $this->getSensitiveMigrations($files, ['origin'], [$branch]);
+
+        return ! empty($migrations);
     }
 }
