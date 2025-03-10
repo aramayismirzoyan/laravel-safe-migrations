@@ -2,6 +2,9 @@
 
 namespace Aramayismirzoyan\SafeMigrations\Console\Commands;
 
+use Aramayismirzoyan\SafeMigrations\Expressions\GitException;
+use Aramayismirzoyan\SafeMigrations\Expressions\InvalidMethodArgumentException;
+use Aramayismirzoyan\SafeMigrations\Expressions\NotFoundRemoteException;
 use Aramayismirzoyan\SafeMigrations\Expressions\SensitiveMigrationsException;
 use Aramayismirzoyan\SafeMigrations\SafeMigration;
 use Illuminate\Console\Command;
@@ -16,6 +19,9 @@ class GitHubActionsCommand extends Command
      * @param SafeMigration $safeMigration
      * @return void
      * @throws SensitiveMigrationsException
+     * @throws GitException
+     * @throws InvalidMethodArgumentException
+     * @throws NotFoundRemoteException
      */
     public function handle(SafeMigration $safeMigration): void
     {
