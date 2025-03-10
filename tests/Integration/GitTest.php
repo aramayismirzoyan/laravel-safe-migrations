@@ -5,12 +5,14 @@ namespace Test\Integration;
 use Aramayismirzoyan\SafeMigrations\Expressions\NotValidCommitHashException;
 use Aramayismirzoyan\SafeMigrations\Git\GitQuery;
 use Symfony\Component\Process\Process;
+use Test\States\GitHubActions\CreateGitHubActionsEnvironment;
 use Test\States\GitTest\AddBranchesPushFilesToThem;
 use Test\States\GitTest\CommitFilesAndAddTwoOrigins;
 use Test\States\GitTest\CreateAndCommitFiles;
 use Test\States\GitTest\CreateFilesAndCommitOne;
 use Test\States\GitTest\CreateFilesButDoNotCommit;
 use Test\States\GitTest\CreateInRemoteAndPullToLocal;
+use Test\States\SafeMigrationTest\CommitFilePushAndEditAfter;
 
 class GitTest extends GitBase
 {
@@ -176,5 +178,48 @@ class GitTest extends GitBase
         // Action
         $gitQuery = new GitQuery($this->repository);
         $actual = $gitQuery->getPulledFiles('test')->parse();
+    }
+
+    public function test_getEditedFilesInActions_method_when_there_are_sensitive_migrations(): void
+    {
+        // Preparing
+        $state = new CommitFilePushAndEditAfter($this->gitCommand);
+        $state->initialize();
+
+        $this->gitCommand->add($state->getExpectedFiles()[0]);
+        $this->gitCommand->commit();
+
+        $stateActions = new CreateGitHubActionsEnvironment($this->gitCommand);
+
+        // Action
+        $gitQuery = new GitQuery($this->repository);
+        $actual = $gitQuery->getEditedFilesInActions(
+            'push',
+            $stateActions->getBefore(),
+            $stateActions->getAfter()
+        )->parse();
+
+        // Assertion
+        $this->assertEquals($state->getExpectedFiles(), $actual);
+    }
+
+    public function test_getEditedFilesInActions_method_when_there_are_no_sensitive_migrations(): void
+    {
+        // Preparing
+        $state = new CreateAndCommitFiles($this->gitCommand);
+        $state->initialize();
+
+        $stateActions = new CreateGitHubActionsEnvironment($this->gitCommand);
+
+        // Action
+        $gitQuery = new GitQuery($this->repository);
+        $actual = $gitQuery->getEditedFilesInActions(
+            'push',
+            $stateActions->getBefore(),
+            $stateActions->getAfter()
+        )->parse();
+
+        // Assertion
+        $this->assertEquals($state->getExpectedFiles(), $actual);
     }
 }
