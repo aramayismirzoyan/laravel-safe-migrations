@@ -1,0 +1,29 @@
+name: Safe migrations
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  migration-tests:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.2'
+        extensions: sqlite3, pdo_sqlite
+        coverage: none
+    - name: Verify PHP Extensions
+      run: php -m | grep -i sqlite
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: ${{ github.event_name == 'pull_request' && 2 || 0 }}
+    - name: Install Dependencies
+      run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
+    - name: Check migrations
+      run: php action master
