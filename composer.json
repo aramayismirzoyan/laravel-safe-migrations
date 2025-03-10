@@ -36,7 +36,8 @@
         "phpunit/phpunit": "^11.5",
         "phpstan/phpstan": "^2.1",
         "laravel/pint": "^1.21",
-        "orchestra/testbench": "^10.0"
+        "orchestra/testbench": "^10.0",
+        "symfony/filesystem": "^7.2"
     },
     "scripts": {
         "post-autoload-dump": [
