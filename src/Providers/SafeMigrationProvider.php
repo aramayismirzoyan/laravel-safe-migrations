@@ -4,6 +4,7 @@ namespace Aramayismirzoyan\SafeMigrations\Providers;
 
 use Aramayismirzoyan\SafeMigrations\Console\Commands\CheckMigratedFilesCommand;
 use Aramayismirzoyan\SafeMigrations\Console\Commands\CheckPushedMigrationsCommand;
+use Aramayismirzoyan\SafeMigrations\Console\Commands\GitHubActionsCommand;
 use Aramayismirzoyan\SafeMigrations\Git\GitCommand;
 use Aramayismirzoyan\SafeMigrations\Git\GitQuery;
 use Aramayismirzoyan\SafeMigrations\SafeMigration;
@@ -39,6 +40,7 @@ class SafeMigrationProvider extends ServiceProvider
                 commands: [
                     CheckPushedMigrationsCommand::class,
                     CheckMigratedFilesCommand::class,
+                    GitHubActionsCommand::class,
                 ],
             );
         }
