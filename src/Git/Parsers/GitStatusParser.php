@@ -2,7 +2,7 @@
 
 namespace Aramayismirzoyan\SafeMigrations\Git\Parsers;
 
-class GitStatusParser implements Parser
+class GitStatusParser extends BaseParser implements Parser
 {
     /**
      * @param array<int, string>|string $output
@@ -22,11 +22,10 @@ class GitStatusParser implements Parser
             return [];
         }
 
-        $result = trim($this->output);
-        $result = explode("\n", $result);
+        $output = $this->convertOutputToArray($this->output);
 
         return array_map(function ($item) {
             return basename(preg_split('/\s+/', trim($item))[1]);
-        }, $result);
+        }, $output);
     }
 }

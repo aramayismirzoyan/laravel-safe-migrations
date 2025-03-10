@@ -2,7 +2,7 @@
 
 namespace Aramayismirzoyan\SafeMigrations\Git\Parsers;
 
-class GitLsRemoteParser implements Parser
+class GitLsRemoteParser extends BaseParser implements Parser
 {
     /**
      * @param array<int, string>|string $output
@@ -22,7 +22,7 @@ class GitLsRemoteParser implements Parser
             return [];
         }
 
-        $output = explode("\n", trim($this->output));
+        $output = $this->convertOutputToArray($this->output);
 
         return array_map(function ($item) {
             $split = preg_split('/\s+/', trim($item))[1];

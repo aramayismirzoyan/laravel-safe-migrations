@@ -2,7 +2,7 @@
 
 namespace Aramayismirzoyan\SafeMigrations\Git\Parsers;
 
-class GitRemoteParser implements Parser
+class GitRemoteParser extends BaseParser implements Parser
 {
     /**
      * @param array<int, string>|string $output
@@ -18,10 +18,10 @@ class GitRemoteParser implements Parser
      */
     public function parse(): array
     {
-        $result = explode("\n", trim($this->output));
+        $output = $this->convertOutputToArray($this->output);
 
         return array_map(function ($item) {
             return trim($item);
-        }, $result);
+        }, $output);
     }
 }

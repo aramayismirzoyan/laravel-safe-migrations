@@ -2,7 +2,7 @@
 
 namespace Aramayismirzoyan\SafeMigrations\Git\Parsers;
 
-class ListParser implements Parser
+class ListParser extends BaseParser implements Parser
 {
     /**
      * @param array<int,string>|string $output
@@ -18,8 +18,7 @@ class ListParser implements Parser
      */
     public function parse(): array|string
     {
-        $output = trim($this->output);
-        $output = explode("\n", $output);
+        $output = $this->convertOutputToArray($this->output);
 
         return array_map('trim', $output);
     }

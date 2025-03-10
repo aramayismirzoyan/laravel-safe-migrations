@@ -2,7 +2,7 @@
 
 namespace Aramayismirzoyan\SafeMigrations\Git\Parsers;
 
-class GitBranchParser implements Parser
+class GitBranchParser extends BaseParser implements Parser
 {
     /**
      * @param array<int, string>|string $output
@@ -18,9 +18,7 @@ class GitBranchParser implements Parser
      */
     public function parse(): string
     {
-        $output = trim($this->output);
-
-        $output = explode("\n", $output);
+        $output = $this->convertOutputToArray($this->output);
 
         $current = array_values(array_filter($output, function ($item) {
             return str_contains($item, "* ");
