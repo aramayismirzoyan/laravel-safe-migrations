@@ -28,7 +28,6 @@
     "minimum-stability": "beta",
     "require": {
         "php": "^8.2",
-        "symfony/process": "^7.2",
         "illuminate/support": "^12.0.1",
         "minicli/minicli": "^4.2"
     },
@@ -37,7 +36,8 @@
         "phpstan/phpstan": "^2.1",
         "laravel/pint": "^1.21",
         "orchestra/testbench": "^10.0",
-        "symfony/filesystem": "^7.2"
+        "symfony/filesystem": "^7.2",
+        "symfony/process": "^7.2"
     },
     "scripts": {
         "post-autoload-dump": [
