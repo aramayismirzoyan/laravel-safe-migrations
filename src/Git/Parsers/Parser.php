@@ -5,9 +5,9 @@ namespace Aramayismirzoyan\SafeMigrations\Git\Parsers;
 interface Parser
 {
     /**
-     * @param array<int, string>|string $output
+     * @param array<int, string> $output
      */
-    public function __construct(array|string $output);
+    public function __construct(array $output);
 
     /**
      * Parse Git command output

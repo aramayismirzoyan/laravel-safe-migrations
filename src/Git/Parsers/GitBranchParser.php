@@ -2,12 +2,12 @@
 
 namespace Aramayismirzoyan\SafeMigrations\Git\Parsers;
 
-class GitBranchParser extends BaseParser implements Parser
+class GitBranchParser implements Parser
 {
     /**
-     * @param array<int, string>|string $output
+     * @param array<int, string> $output
      */
-    public function __construct(private readonly array|string $output)
+    public function __construct(private readonly array $output)
     {
     }
 
@@ -18,9 +18,7 @@ class GitBranchParser extends BaseParser implements Parser
      */
     public function parse(): string
     {
-        $output = $this->convertOutputToArray($this->output);
-
-        $current = array_values(array_filter($output, function ($item) {
+        $current = array_values(array_filter($this->output, function ($item) {
             return str_contains($item, "* ");
         }));
 

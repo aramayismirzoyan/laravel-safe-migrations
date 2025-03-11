@@ -2,12 +2,12 @@
 
 namespace Aramayismirzoyan\SafeMigrations\Git\Parsers;
 
-class GitLsRemoteParser extends BaseParser implements Parser
+class GitLsRemoteParser implements Parser
 {
     /**
-     * @param array<int, string>|string $output
+     * @param array<int, string> $output
      */
-    public function __construct(private readonly array|string $output)
+    public function __construct(private readonly array $output)
     {
     }
 
@@ -18,15 +18,9 @@ class GitLsRemoteParser extends BaseParser implements Parser
      */
     public function parse(): array
     {
-        if ($this->output == '') {
-            return [];
-        }
-
-        $output = $this->convertOutputToArray($this->output);
-
         return array_map(function ($item) {
             $split = preg_split('/\s+/', trim($item))[1];
             return explode('/', trim($split))[2];
-        }, $output);
+        }, $this->output);
     }
 }

@@ -2,12 +2,12 @@
 
 namespace Aramayismirzoyan\SafeMigrations\Git\Parsers;
 
-class ListParser extends BaseParser implements Parser
+class ListParser implements Parser
 {
     /**
-     * @param array<int,string>|string $output
+     * @param array<int,string> $output
      */
-    public function __construct(private readonly array|string $output)
+    public function __construct(private readonly array $output)
     {
     }
 
@@ -18,8 +18,6 @@ class ListParser extends BaseParser implements Parser
      */
     public function parse(): array|string
     {
-        $output = $this->convertOutputToArray($this->output);
-
-        return array_map('trim', $output);
+        return array_map('trim', $this->output);
     }
 }

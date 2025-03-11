@@ -2,6 +2,7 @@
 
 namespace Aramayismirzoyan\SafeMigrations\Git;
 
+use Aramayismirzoyan\SafeMigrations\Command\Runner;
 use Aramayismirzoyan\SafeMigrations\Expressions\GitException;
 use Aramayismirzoyan\SafeMigrations\Expressions\InvalidMethodArgumentException;
 use Aramayismirzoyan\SafeMigrations\Expressions\NotFoundRemoteException;
@@ -12,8 +13,6 @@ use Aramayismirzoyan\SafeMigrations\Git\Parsers\GitLsRemoteParser;
 use Aramayismirzoyan\SafeMigrations\Git\Parsers\GitRemoteParser;
 use Aramayismirzoyan\SafeMigrations\Git\Parsers\GitStatusParser;
 use Aramayismirzoyan\SafeMigrations\Git\Parsers\ListParser;
-use Aramayismirzoyan\SafeMigrations\SafeMigration;
-use Symfony\Component\Process\Process;
 
 class GitQuery
 {
@@ -32,14 +31,13 @@ class GitQuery
      */
     public function getRemotes(): GitRemoteParser
     {
-        $process = new Process(['git', 'remote'], $this->repository);
-        $process->run();
+        $command = "git remote";
+        $runner = (new Runner($command, $this->repository))->run();
+        $output = $runner->getOutput();
 
-        if (!$process->isSuccessful()) {
+        if (!$runner->isSuccessful()) {
             throw new GitException('Git remote command is not successful');
         }
-
-        $output = $process->getOutput();
 
         return new GitRemoteParser($output);
     }
@@ -53,14 +51,13 @@ class GitQuery
      */
     public function getRemoteBranchesByRemote(string $remote = 'origin'): GitLsRemoteParser
     {
-        $process = new Process(['git', 'ls-remote', '--heads', $remote], $this->repository);
-        $process->run();
+        $command = "git ls-remote --heads {$remote}";
+        $runner = (new Runner($command, $this->repository))->run();
+        $output = $runner->getOutput();
 
-        if (!$process->isSuccessful()) {
+        if (!$runner->isSuccessful()) {
             throw new GitException('Git ls-remote command is not successful');
         }
-
-        $output = $process->getOutput();
 
         return new GitLsRemoteParser($output);
     }
@@ -101,22 +98,15 @@ class GitQuery
      */
     public function getEditedButNotCommittedFiles(): GitStatusParser
     {
-        $command = ['git', 'status', '-s', '--porcelain'];
+        $command = "git status -s --porcelain";
+        $runner = (new Runner($command, $this->repository))->run(true);
+        $output = $runner->getOutput();
 
-        if (!defined('PHPUNIT_TESTSUITE')) {
-            $command[] = SafeMigration::MIGRATIONS_PATH;
-        }
-
-        $process = new Process($command, $this->repository);
-        $process->run();
-
-        if (!$process->isSuccessful()) {
+        if (!$runner->isSuccessful()) {
             throw new GitException('Git status command is not successful');
         }
 
-        $result = $process->getOutput();
-
-        return new GitStatusParser($result);
+        return new GitStatusParser($output);
     }
 
     /**
@@ -127,14 +117,13 @@ class GitQuery
      */
     public function getCurrentBranch(): GitBranchParser
     {
-        $process = new Process(['git',  'branch'], $this->repository);
-        $process->run();
+        $command = "git branch";
+        $runner = (new Runner($command, $this->repository))->run();
+        $output = $runner->getOutput();
 
-        if (!$process->isSuccessful()) {
+        if (!$runner->isSuccessful()) {
             throw new GitException('Git branch command is not successful');
         }
-
-        $output = $process->getOutput();
 
         return new GitBranchParser($output);
     }
@@ -152,18 +141,11 @@ class GitQuery
 
         $remoteBranch = $remote . '/' . $currentBranch;
 
-        $command = 'cd ' . $this->repository . ' && ';
-        $command .= "git diff --stat {$remoteBranch}";
+        $command = "git diff --stat {$remoteBranch}";
+        $runner = (new Runner($command, $this->repository))->run(true);
+        $output = $runner->getOutput();
 
-        if (!defined('PHPUNIT_TESTSUITE')) {
-            $command .= ' ' . SafeMigration::MIGRATIONS_PATH;
-        }
-
-        $command .= ' 2>&1';
-
-        exec($command, $output, $exitCode);
-
-        if ($exitCode !== 0) {
+        if (!$runner->isSuccessful()) {
             throw new GitException('Git diff command is not successful');
         }
 
@@ -203,17 +185,12 @@ class GitQuery
      */
     public function hasRemoteFile(string $remoteBranch, string $file): bool
     {
-        if (!defined('PHPUNIT_TESTSUITE')) {
-            $file = SafeMigration::MIGRATIONS_PATH . DIRECTORY_SEPARATOR . $file;
-        }
-
         $remoteFull = "{$remoteBranch}:{$file}";
-        $command = ['git', 'cat-file', '-e', $remoteFull];
 
-        $process = new Process($command, $this->repository);
-        $process->run();
+        $command = "git cat-file -e {$remoteFull}";
+        $runner = (new Runner($command, $this->repository))->run(true);
 
-        return $process->isSuccessful();
+        return $runner->isSuccessful();
     }
 
     /**
@@ -242,14 +219,9 @@ class GitQuery
      */
     public function getCurrentBranchRemote(): ListParser
     {
-        $command = [
-            'git', 'rev-parse', '--abbrev-ref', '--symbolic-full-name', '@{u}'
-        ];
-
-        $process = new Process($command, $this->repository);
-        $process->run();
-
-        $output = $process->getOutput();
+        $command = "git rev-parse --abbrev-ref --symbolic-full-name @{u}";
+        $runner = (new Runner($command, $this->repository))->run();
+        $output = $runner->getOutput();
 
         return new ListParser($output);
     }
@@ -261,12 +233,12 @@ class GitQuery
      */
     public function getRemoteCommitHash(): ListParser
     {
-        $remote = $this->getCurrentBranchRemote()->parse();
+        $remotes = $this->getCurrentBranchRemote()->parse();
+        $remotes = implode(' ', $remotes);
 
-        $process = new Process(['git', 'rev-parse', ...$remote], $this->repository);
-        $process->run();
-
-        $output = $process->getOutput();
+        $command = "git rev-parse " . $remotes;
+        $runner = (new Runner($command, $this->repository))->run();
+        $output = $runner->getOutput();
 
         return new ListParser($output);
     }
@@ -284,27 +256,13 @@ class GitQuery
             $commitHash = $this->getRemoteCommitHash()->parse()[0];
         }
 
-        $command = [
-            'git',
-            'diff-tree',
-            '--no-commit-id',
-            '--name-only',
-            '-r',
-            $commitHash
-        ];
+        $command = "git diff-tree --no-commit-id --name-only -r {$commitHash}";
+        $runner = (new Runner($command, $this->repository))->run(true);
+        $output = $runner->getOutput();
 
-        if (!defined('PHPUNIT_TESTSUITE')) {
-            $command[] = SafeMigration::MIGRATIONS_PATH;
-        }
-
-        $process = new Process($command, $this->repository);
-        $process->run();
-
-        if (!$process->isSuccessful()) {
+        if (!$runner->isSuccessful()) {
             throw new NotValidCommitHashException('Not valid commit hash');
         }
-
-        $output = $process->getOutput();
 
         return new ListParser($output);
     }
@@ -320,8 +278,7 @@ class GitQuery
      */
     public function getEditedFilesInActions(string $event, ?string $before = null, ?string $after = null): GitDiffParser
     {
-        $command = 'cd '.$this->repository.' && ';
-        $command .= 'git diff --name-only ';
+        $command = 'git diff --name-only ';
 
         if ($event == 'pull_request') {
             $command .= '-r HEAD^1 HEAD';
@@ -333,13 +290,8 @@ class GitQuery
             $command .= $before.' '.$after;
         }
 
-        if (! defined('PHPUNIT_TESTSUITE')) {
-            $command .= ' '.SafeMigration::MIGRATIONS_PATH;
-        }
-
-        $command .= ' 2>&1';
-
-        exec($command, $output, $exitCode);
+        $runner = (new Runner($command, $this->repository))->run(true);
+        $output = $runner->getOutput();
 
         return new GitDiffParser($output);
     }

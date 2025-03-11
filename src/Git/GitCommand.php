@@ -2,8 +2,8 @@
 
 namespace Aramayismirzoyan\SafeMigrations\Git;
 
+use Aramayismirzoyan\SafeMigrations\Command\Runner;
 use Aramayismirzoyan\SafeMigrations\Expressions\GitException;
-use Symfony\Component\Process\Process;
 
 class GitCommand
 {
@@ -22,10 +22,10 @@ class GitCommand
      */
     public function fetchAll(): void
     {
-        $process = new Process(['git', 'fetch', '--all'], $this->repository);
-        $process->run();
+        $command = "git fetch --all";
+        $runner = (new Runner($command, $this->repository))->run();
 
-        if (!$process->isSuccessful()) {
+        if (!$runner->isSuccessful()) {
             throw new GitException('Git fetch command is not successful');
         }
     }

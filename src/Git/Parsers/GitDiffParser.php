@@ -5,9 +5,9 @@ namespace Aramayismirzoyan\SafeMigrations\Git\Parsers;
 class GitDiffParser implements Parser
 {
     /**
-     * @param array<int,string>|string $output
+     * @param array<int,string> $output
      */
-    public function __construct(private readonly array|string $output)
+    public function __construct(private readonly array $output)
     {
     }
 
