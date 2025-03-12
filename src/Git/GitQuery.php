@@ -13,6 +13,7 @@ use Aramayismirzoyan\SafeMigrations\Git\Parsers\GitLsRemoteParser;
 use Aramayismirzoyan\SafeMigrations\Git\Parsers\GitRemoteParser;
 use Aramayismirzoyan\SafeMigrations\Git\Parsers\GitStatusParser;
 use Aramayismirzoyan\SafeMigrations\Git\Parsers\ListParser;
+use Aramayismirzoyan\SafeMigrations\SafeMigration;
 
 class GitQuery
 {
@@ -185,10 +186,14 @@ class GitQuery
      */
     public function hasRemoteFile(string $remoteBranch, string $file): bool
     {
+        if (!defined('PHPUNIT_TESTSUITE')) {
+            $file = SafeMigration::MIGRATIONS_PATH . DIRECTORY_SEPARATOR . $file;
+        }
+
         $remoteFull = "{$remoteBranch}:{$file}";
 
         $command = "git cat-file -e {$remoteFull}";
-        $runner = (new Runner($command, $this->repository))->run(true);
+        $runner = (new Runner($command, $this->repository))->run();
 
         return $runner->isSuccessful();
     }
