@@ -275,29 +275,43 @@ class GitQuery
     /**
      * Get edited files in GitHub Actions during push or pull request
      *
-     * @param string $event
-     * @param string|null $before
-     * @param string|null $after
      * @return GitDiffParser
-     * @throws InvalidMethodArgumentException
      */
-    public function getEditedFilesInActions(string $event, ?string $before = null, ?string $after = null): GitDiffParser
+    public function getEditedFilesInActions(): GitDiffParser
     {
-        $command = 'git diff --name-only ';
-
-        if ($event == 'pull_request') {
-            $command .= '-r HEAD^1 HEAD';
-        } else {
-            if (is_null($after) || is_null($before)) {
-                throw new InvalidMethodArgumentException('You need to pass $after and $before for the push event');
-            }
-
-            $command .= $before.' '.$after;
-        }
+        $command = 'git diff --name-only -r HEAD^1 HEAD';
 
         $runner = (new Runner($command, $this->repository))->run(true);
         $output = $runner->getOutput();
 
         return new GitDiffParser($output);
+    }
+
+    /**
+     * Check if the file exists in the main branch
+     *
+     * @param string $file
+     * @param string $branch
+     * @param string $token
+     * @param string $repository
+     * @return bool
+     */
+    public function hasRemoteFileInActions(string $file, string $branch, string $token, string $repository): bool
+    {
+        $command = 'curl -s -o /dev/null -w "%{http_code}" ' .
+            '-H "Authorization: Bearer ' . $token . '" '.
+            '-H "Accept: application/vnd.github.v3+json" '.
+            '"https://api.github.com/repos/' . $repository . '/contents/' .
+            $file . '?ref=' . $branch . '"';
+
+        $run = (new Runner($command, $this->repository))->run();
+
+        $output = $run->getOutput()[0] ?? null;
+
+        if($output === '200') {
+            return true;
+        }
+
+        return false;
     }
 }

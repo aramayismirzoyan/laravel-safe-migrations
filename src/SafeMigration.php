@@ -3,6 +3,7 @@
 namespace Aramayismirzoyan\SafeMigrations;
 
 use Aramayismirzoyan\SafeMigrations\Expressions\NotValidCommitHashException;
+use Aramayismirzoyan\SafeMigrations\Expressions\SensitiveMigrationsException;
 use Aramayismirzoyan\SafeMigrations\Git\GitCommand;
 use Aramayismirzoyan\SafeMigrations\Git\GitHelper;
 use Aramayismirzoyan\SafeMigrations\Git\GitQuery;
@@ -123,31 +124,30 @@ final class SafeMigration
         return $migrations->toArray();
     }
 
+
     /**
-     * @param string $event
-     * @param string $before
-     * @param string $after
+     * Check and throw an exception if there is at least one sensitive migration
+     *
      * @param string $branch
-     * @return bool
-     * @throws Expressions\GitException
-     * @throws Expressions\InvalidMethodArgumentException
-     * @throws Expressions\NotFoundRemoteException
+     * @param string $token
+     * @param string $repository
+     * @return void
+     * @throws SensitiveMigrationsException
      */
-    public function hasSensitiveMigrationsInActions(string $event, string $before, string $after, string $branch): bool
+    public function checkSensitiveMigrationsInAction(
+        string $branch,
+        string $token,
+        string $repository
+    ): void
     {
-        $params['event'] = $event;
+        $files = $this->gitQuery->getEditedFilesInActions()->parse();
 
-        if ($before !== '') {
-            $params['before'] = $before;
+        foreach ($files as $file) {
+            $filePath = self::MIGRATIONS_PATH . DIRECTORY_SEPARATOR . $file;
+
+            if($this->gitQuery->hasRemoteFileInActions($filePath, $branch, $token, $repository)) {
+                throw new SensitiveMigrationsException('You have sensitive migrations.');
+            }
         }
-
-        if ($after !== '') {
-            $params['after'] = $after;
-        }
-
-        $files = $this->gitQuery->getEditedFilesInActions(...$params)->parse();
-        $migrations = $this->getSensitiveMigrations($files, ['origin'], [$branch]);
-
-        return ! empty($migrations);
     }
 }
