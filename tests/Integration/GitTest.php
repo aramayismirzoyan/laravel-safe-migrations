@@ -189,8 +189,6 @@ class GitTest extends GitBase
         $this->gitCommand->add($state->getExpectedFiles()[0]);
         $this->gitCommand->commit();
 
-        $stateActions = new CreateGitHubActionsEnvironment($this->gitCommand);
-
         // Action
         $gitQuery = new GitQuery($this->repository);
         $actual = $gitQuery->getEditedFilesInActions()->parse();
@@ -204,8 +202,6 @@ class GitTest extends GitBase
         // Preparing
         $state = new CreateAndCommitFiles($this->gitCommand);
         $state->initialize();
-
-        $stateActions = new CreateGitHubActionsEnvironment($this->gitCommand);
 
         // Action
         $gitQuery = new GitQuery($this->repository);
