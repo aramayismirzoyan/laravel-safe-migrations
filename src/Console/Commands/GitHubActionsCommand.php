@@ -8,9 +8,9 @@ use Illuminate\Console\Command;
 
 class GitHubActionsCommand extends Command
 {
-    protected $signature = 'github:actions {branch}';
+    protected $signature = 'actions:migrations {branch}';
 
-    protected $description = 'Check Laravel migrated migrations';
+    protected $description = 'Check Laravel sensitive migrations on GitHub Actions';
 
     /**
      * @param SafeMigration $safeMigration
