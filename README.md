@@ -46,3 +46,26 @@ If you do not specify a commit hash, then the commit you pulled using the `git p
 ~~~
 php artisan check:migrated commit_hash
 ~~~
+
+## GitHub Actions
+
+You can also run migration checking on your GitHub Actions. You need to have this configuration: 
+
+~~~
+    steps:
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.2'
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: ${{ github.event_name == 'pull_request' && 2 }}
+    - name: Install Dependencies
+      run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
+    - name: Check migrations
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: php artisan github:actions <main_branch>
+~~~
+
+In the `php artisan github:actions` command you need to pass your main branch as an argument. The check will only happen during a pull request and will check for migrations on the master branch. If there is at least one sensitive migration pipeline that will fail.
