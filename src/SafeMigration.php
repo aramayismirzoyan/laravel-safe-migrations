@@ -138,14 +138,13 @@ final class SafeMigration
         string $branch,
         string $token,
         string $repository
-    ): void
-    {
+    ): void {
         $files = $this->gitQuery->getEditedFilesInActions()->parse();
 
         foreach ($files as $file) {
             $filePath = self::MIGRATIONS_PATH . DIRECTORY_SEPARATOR . $file;
 
-            if($this->gitQuery->hasRemoteFileInActions($filePath, $branch, $token, $repository)) {
+            if ($this->gitQuery->hasRemoteFileInActions($filePath, $branch, $token, $repository)) {
                 throw new SensitiveMigrationsException('You have sensitive migrations.');
             }
         }

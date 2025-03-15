@@ -4,7 +4,6 @@ namespace Aramayismirzoyan\SafeMigrations\Git;
 
 use Aramayismirzoyan\SafeMigrations\Command\Runner;
 use Aramayismirzoyan\SafeMigrations\Expressions\GitException;
-use Aramayismirzoyan\SafeMigrations\Expressions\InvalidMethodArgumentException;
 use Aramayismirzoyan\SafeMigrations\Expressions\NotFoundRemoteException;
 use Aramayismirzoyan\SafeMigrations\Expressions\NotValidCommitHashException;
 use Aramayismirzoyan\SafeMigrations\Git\Parsers\GitBranchParser;
@@ -308,7 +307,7 @@ class GitQuery
 
         $output = $run->getOutput()[0] ?? null;
 
-        if($output === '200') {
+        if ($output === '200') {
             return true;
         }
 

@@ -26,7 +26,7 @@ class GitHubActionsCommand extends Command
         $ref = getenv('GITHUB_REF');
         $currentBranch = str_replace('refs/heads/', '', $ref);
 
-        if($event == 'pull_request' && $currentBranch !== $branch) {
+        if ($event == 'pull_request' && $currentBranch !== $branch) {
             $safeMigration->checkSensitiveMigrationsInAction($branch, $token, $repository);
         }
     }
