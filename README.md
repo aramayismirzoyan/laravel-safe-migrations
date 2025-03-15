@@ -68,4 +68,4 @@ You can also run migration checking on your GitHub Actions. You need to have thi
       run: php artisan actions:migrations <main_branch>
 ~~~
 
-In the `php artisan actions:migrations` command you need to pass your main branch as an argument. The check will only happen during a pull request and will check for migrations on the master branch. If there is at least one sensitive migration pipeline that will fail.
+In the `php artisan actions:migrations` command you need to pass your main branch as an argument. The check will only happen during a pull request and will check for migrations on the main branch. If there is at least one sensitive migration pipeline that will fail.
