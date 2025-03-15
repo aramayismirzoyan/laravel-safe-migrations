@@ -193,11 +193,7 @@ class GitTest extends GitBase
 
         // Action
         $gitQuery = new GitQuery($this->repository);
-        $actual = $gitQuery->getEditedFilesInActions(
-            'push',
-            $stateActions->getBefore(),
-            $stateActions->getAfter()
-        )->parse();
+        $actual = $gitQuery->getEditedFilesInActions()->parse();
 
         // Assertion
         $this->assertEquals($state->getExpectedFiles(), $actual);
@@ -213,11 +209,7 @@ class GitTest extends GitBase
 
         // Action
         $gitQuery = new GitQuery($this->repository);
-        $actual = $gitQuery->getEditedFilesInActions(
-            'push',
-            $stateActions->getBefore(),
-            $stateActions->getAfter()
-        )->parse();
+        $actual = $gitQuery->getEditedFilesInActions()->parse();
 
         // Assertion
         $this->assertEquals($state->getExpectedFiles(), $actual);
