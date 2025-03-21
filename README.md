@@ -26,15 +26,6 @@ To update data from a remote repository, set the --fetch flag.
 php artisan check:migrations --fetch
 ~~~
 
-You can also run this command via ./vendor/bin/safemigrations
-~~~
-./vendor/bin/safemigrations check
-~~~
-Specify branches and remotes.
-~~~
-./vendor/bin/safemigrations check branches=main,branch2 remotes=origin,local
-~~~
-
 ### check:migrated
 The command checks if you have migrated migrations that have been changed by other programmers. The command checks the changes you have pulled using the `git pull` command.
 ~~~

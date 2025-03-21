@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "f96a5e2cb10e15cfeebc9273b0929291",
+    "content-hash": "1f8c49c648a8d5c052c65630f85ddf78",
     "packages": [
         {
             "name": "brick/math",
@@ -1939,61 +1939,6 @@
                 }
             ],
             "time": "2024-12-08T08:18:47+00:00"
-        },
-        {
-            "name": "minicli/minicli",
-            "version": "4.2.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/minicli/minicli.git",
-                "reference": "1675c0609205c106bb7c2353888dec361808d92e"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/minicli/minicli/zipball/1675c0609205c106bb7c2353888dec361808d92e",
-                "reference": "1675c0609205c106bb7c2353888dec361808d92e",
-                "shasum": ""
-            },
-            "require": {
-                "ext-readline": "*",
-                "php": ">=8.1"
-            },
-            "require-dev": {
-                "laravel/pint": "^1.10",
-                "mockery/mockery": "^1.5",
-                "pestphp/pest": "^2.5",
-                "phpstan/phpstan": "^1.10"
-            },
-            "type": "library",
-            "autoload": {
-                "files": [
-                    "src/helpers.php"
-                ],
-                "psr-4": {
-                    "Minicli\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "description": "Experimental micro CLI framework for PHP",
-            "homepage": "https://github.com/minicli/minicli",
-            "keywords": [
-                "cli",
-                "command-line"
-            ],
-            "support": {
-                "issues": "https://github.com/minicli/minicli/issues",
-                "source": "https://github.com/minicli/minicli/tree/4.2.0"
-            },
-            "funding": [
-                {
-                    "url": "https://github.com/erikaheidi",
-                    "type": "github"
-                }
-            ],
-            "time": "2023-06-27T08:16:45+00:00"
         },
         {
             "name": "monolog/monolog",
@@ -8758,12 +8703,12 @@
     ],
     "aliases": [],
     "minimum-stability": "beta",
-    "stability-flags": [],
+    "stability-flags": {},
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
         "php": "^8.2"
     },
-    "platform-dev": [],
-    "plugin-api-version": "2.3.0"
+    "platform-dev": {},
+    "plugin-api-version": "2.6.0"
 }
