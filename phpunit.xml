@@ -7,11 +7,6 @@
         displayDetailsOnTestsThatTriggerErrors="true"
         displayDetailsOnTestsThatTriggerNotices="true"
         displayDetailsOnPhpunitDeprecations="true">
-    <groups>
-        <exclude>
-            <group>actions</group>
-        </exclude>
-    </groups>
     <testsuites>
         <testsuite name="Application Test Suite">
             <directory>./tests</directory>
