@@ -5,7 +5,6 @@ namespace Test\Integration;
 use Aramayismirzoyan\SafeMigrations\Expressions\NotValidCommitHashException;
 use Aramayismirzoyan\SafeMigrations\Git\GitQuery;
 use Symfony\Component\Process\Process;
-use Test\States\GitHubActions\CreateGitHubActionsEnvironment;
 use Test\States\GitTest\AddBranchesPushFilesToThem;
 use Test\States\GitTest\CommitFilesAndAddTwoOrigins;
 use Test\States\GitTest\CreateAndCommitFiles;
